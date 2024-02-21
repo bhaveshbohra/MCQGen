@@ -2,11 +2,15 @@ import os
 import json
 import pandas as pd
 import traceback 
+
+
 from langchain_openai import ChatOpenAI
 #below this two library make error 
-#from langchain_community.chat_models import ChatOpenAI
+from langchain_community.chat_models import ChatOpenAI
 #from langchain.chat_models import ChatOpenAI
 from dotenv import load_dotenv
+
+
 
 from src.mcqgenerator.utils import read_file, get_table_data
 from src.mcqgenerator.logger import logging
