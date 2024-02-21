@@ -17,7 +17,7 @@ def read_file(file):
                 text+=page.extract_text()
             return text
         
-        except Exceptionas as e:
+        except Exception as e:
             raise Exception("error reading the pdf file ")
         
     elif file.name.endswith(".txt"):
