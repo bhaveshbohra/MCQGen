@@ -33,23 +33,25 @@ with st.form("user_inputs"):
     tone=st.text_input("Complexity Level of Question", max_char=20, placeholder="simple")
 
     #Add Button
-    button= st.form_submit_button("create MCQs")
+    submit_button= st.form_submit_button("create MCQs")
 
     #check if the button is clicked and all field have input 
 
-    if button  and uploaded_file is not None and mcq_count and subject and tone:
+    if submit_button and uploaded_file is not None and mcq_count and subject and tone:
         with st.spinner("loading..."):
             try:
                 text= read_file(uploaded_file)
                 #count tokens and the cost of API call
                 with get_openai_callback() as cb:
-                    response= generate_evaluate_chain(
+                    response= generate_evaluate_chain( 
+                    {
                         "text":text,
                         "number": mcq_count,
                         "subject":subject,
                         "tone":tone,
                         "response_json":json.dumps(RESPONSE_JSON)
-                    ) 
+                    }
+                ) 
             except Exception as e:
                 traceback.print_exception(type(e), e, e.__traceback__)
 
