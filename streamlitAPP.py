@@ -30,52 +30,46 @@ with st.form("user_inputs"):
     subject= st.text_input("Insert Subject", max_chars=20)
 
     #Quiz Tone
-    tone=st.text_input("Complexity Level of Question", max_char=20, placeholder="simple")
+    tone=st.text_input("Complexity Level of Question", max_chars=20, placeholder="simple")
 
-    #Add Button
-    submit_button= st.form_submit_button("create MCQs")
+    # Add Button
+    submit_button = st.form_submit_button("Create MCQs")
 
     #check if the button is clicked and all field have input 
-
     if submit_button and uploaded_file is not None and mcq_count and subject and tone:
-        with st.spinner("loading..."):
+        with st.spinner("Loading..."):
             try:
                 text= read_file(uploaded_file)
                 #count tokens and the cost of API call
                 with get_openai_callback() as cb:
-                    response= generate_evaluate_chain( 
-                    {
-                        "text":text,
-                        "number": mcq_count,
-                        "subject":subject,
-                        "tone":tone,
-                        "response_json":json.dumps(RESPONSE_JSON)
-                    }
-                ) 
+                    response = generate_evaluate_chain( 
+                        {
+                            "text": text,
+                            "number": mcq_count,
+                            "subject": subject,
+                            "tone": tone,
+                            "response_json": json.dumps(RESPONSE_JSON)
+                        }
+                    ) 
             except Exception as e:
                 traceback.print_exception(type(e), e, e.__traceback__)
-
             else:
                 print(f"Total Token:{cb.total_tokens}")
                 print(f"Prompt Token:{cb.prompt_tokens}")
                 print(f"Completion Token:{cb.completion_tokens}")
                 print(f"Total Cost:{cb.total_cost}")
-                if isinstance(response,dict):
-                    
-                    quiz= response.get("quiz",None)
+                if isinstance(response, dict):
+                    quiz = response.get("quiz", None)
                     if quiz is not None:
-                        table_data= get_table_data(quiz)
+                        table_data = get_table_data(quiz)
                         if table_data is not None:
-                            df= pd.DataFrame(table_data)
-                            df.index= df.index+1
+                            df = pd.DataFrame(table_data)
+                            df.index = df.index + 1
                             st.table(df)
-                            #Display the review in atext box as well
-                            st.text_area(label="Review", value =response["review"])
+                            #Display the review in a text box as well
+                            st.text_area(label="Review", value=response["review"])
                         else:
                             st.error("Error in the table data")
-        
                 else:
                     st.write(response)
-
-
 
